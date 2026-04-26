@@ -18,8 +18,8 @@ router = APIRouter()
 HERMES_HOME = Path(os.environ.get("HERMES_HOME", "~/.hermes")).expanduser()
 HONCHA_ROOT = Path("/home/gumbyender/honcha")
 HONCHA_DB_CONTAINER = "honcho-database-1"
-HONCHA_DB_NAME = "honcha"
-HONCHA_DB_USER = "honcha"
+HONCHA_DB_NAME = "honcho"
+HONCHA_DB_USER = "honcho"
 HONCHA_API_URL = "http://localhost:8002"
 
 # Cache for 30 seconds to avoid hammering DB
