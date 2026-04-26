@@ -1,0 +1,77 @@
+/* Honcha Memory Plugin — Styles */
+
+.honcha-memory {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.honcha-memory h2 {
+  margin: 0 0 1rem 0;
+  border-bottom: 1px solid var(--color-border, #333);
+  padding-bottom: 0.5rem;
+}
+
+.honcha-memory h3 {
+  margin: 1.5rem 0 0.75rem 0;
+  font-size: 1.1rem;
+  color: var(--color-muted, #888);
+}
+
+.grid.grid-cols-2.md\:grid-cols-5 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+}
+
+.bg-gray-800 { background: rgba(0,0,0,0.4); }
+.bg-gray-700 { background: rgba(255,255,255,0.1); }
+.text-gray-500 { color: #888; }
+.text-gray-400 { color: #aaa; }
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-2xl { font-size: 1.5rem; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.font-mono { font-family: monospace; }
+
+.rounded { border-radius: 6px; }
+.border { border: 1px solid #333; }
+.border-t { border-top: 1px solid #333; }
+.border-l-4 { border-left-width: 4px; }
+.border-blue-500 { border-left-color: #3b82f6; }
+.border-red-700 { border-color: #dc2626; }
+
+.bg-red-900\/30 { background: rgba(127, 29, 29, 0.3); }
+.bg-green-900 { background: rgba(21, 128, 61, 0.5); }
+.bg-blue-600 { background: #2563eb; }
+.bg-blue-600:hover { background: #1d4ed8; }
+.bg-blue-700 { background: #1d4ed8; }
+
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+
+.flex { display: flex; }
+.flex-1 { flex: 1; }
+.justify-between { justify-content: space-between; }
+.items-center { align-items: center; }
+.gap-2 { gap: 0.5rem; }
+
+.opacity-50 { opacity: 0.5; }
+
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+table { width: 100%; border-collapse: collapse; }
+thead { background: rgba(255,255,255,0.05); }

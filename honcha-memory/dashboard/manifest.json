@@ -1,0 +1,17 @@
+{
+  "name": "honcha-memory",
+  "label": "Honcha Memory",
+  "description": "Monitor and manage Honcha local memory \u2014 live stats, queue health, semantic search, and operations",
+  "icon": "BrainCircuit",
+  "version": "0.1.0",
+  "entry": "dist/index.js",
+  "css": "plugin.css",
+  "tab": {
+    "path": "/honcha-memory",
+    "position": "end"
+  },
+  "api": "api.py",
+  "slots": [
+    "sidebar_bottom"
+  ]
+}

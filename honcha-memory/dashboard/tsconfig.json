@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "../dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "hermes-dashboard-plugin-api": ["../../node_modules/hermes-dashboard-plugin-api/dist"]
+    }
+  },
+  "include": ["*.tsx", "*.ts", "components/*.tsx", "widgets/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}
