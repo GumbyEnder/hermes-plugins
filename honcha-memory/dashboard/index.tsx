@@ -1,9 +1,3 @@
-/**
- * Honcha Memory Dashboard Plugin for Herrhes
- * Displays local memory statistics, queue status, and semantic search
- * Backend: /api/plugins/honcha-memory/*
- */
-
 import { useState, useEffect, useCallback } from 'react';
 import styles from './plugin.css';
 
@@ -39,7 +33,7 @@ export default function HonchaMemory() {
   const fetchStats = useCallback(async () => {
     try {
       const res = await fetch('/api/plugins/honcha-memory/stats');
-      if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data: Stats = await res.json();
       setStats(data);
       setError(null);
@@ -53,11 +47,11 @@ export default function HonchaMemory() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    
+
     setSearchLoading(true);
     setSearchError(null);
     setSearchResults([]);
-    
+
     try {
       const res = await fetch('/api/plugins/honcha-memory/search', {
         method: 'POST',
@@ -74,7 +68,6 @@ export default function HonchaMemory() {
     }
   };
 
-  // Initial fetch + periodic refresh
   useEffect(() => {
     fetchStats();
     const interval = setInterval(fetchStats, 30000);
@@ -86,7 +79,7 @@ export default function HonchaMemory() {
       <header className="plugin-header">
         <h1>Honcha Memory</h1>
         <div className={`health-badge ${stats?.healthy ? 'healthy' : 'unhealthy'}`}>
-          {stats?.healthy ? '● Healthy' : '● Offline'}
+          {stats?.healthy ? 'Healthy' : 'Offline'}
         </div>
       </header>
 
@@ -96,7 +89,6 @@ export default function HonchaMemory() {
         <div className="error">Error: {error}</div>
       ) : stats ? (
         <>
-          {/* Stats Grid */}
           <div className="stats-grid">
             <div className="stat-card">
               <span className="stat-label">Documents</span>
@@ -118,7 +110,6 @@ export default function HonchaMemory() {
             </div>
           </div>
 
-          {/* Peers Breakdown */}
           {stats.peers && Object.keys(stats.peers).length > 0 && (
             <section className="section">
               <h2>Per-Agent Documents</h2>
@@ -138,49 +129,49 @@ export default function HonchaMemory() {
             </section>
           )}
 
-      {/* Search */}
-      <section className="section">
-        <h2>Semantic Search</h2>
-        <form className="search-form" onSubmit={handleSearch}>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search memories..."
-            className="search-input"
-          />
-          <button type="submit" disabled={searchLoading} className="search-btn">
-            {searchLoading ? '🔍' : 'Search'}
-          </button>
-        </form>
-        {searchError && <div className="error">{searchError}</div>}
-        {searchResults.length > 0 && (
-          <div className="search-results">
-            {searchResults.map(r => (
-              <div key={r.id} className="result-card">
-                <div className="result-meta">
-                  <span className="result-id">{r.id}</span>
-                  {r.observer && <span className="result-observer">{r.observer}</span>}
-                  {r.score !== undefined && <span className="result-score">{(r.score * 100).toFixed(1)}%</span>}
-                </div>
-                <div className="result-content">{r.content}</div>
+          <section className="section">
+            <h2>Semantic Search</h2>
+            <form className="search-form" onSubmit={handleSearch}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search memories..."
+                className="search-input"
+              />
+              <button type="submit" disabled={searchLoading} className="search-btn">
+                {searchLoading ? 'Searching' : 'Search'}
+              </button>
+            </form>
+            {searchError && <div className="error">{searchError}</div>}
+            {searchResults.length > 0 && (
+              <div className="search-results">
+                {searchResults.map(r => (
+                  <div key={r.id} className="result-card">
+                    <div className="result-meta">
+                      <span className="result-id">{r.id}</span>
+                      {r.observer && <span className="result-observer">{r.observer}</span>}
+                      {r.score !== undefined && <span className="result-score">{(r.score * 100).toFixed(1)}%</span>}
+                    </div>
+                    <div className="result-content">{r.content}</div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-        {searchResults.length === 0 && !searchLoading && !searchError && searchQuery && (
-          <div className="no-results">No results found.</div>
-        )}
-      </section>
+            )}
+            {searchResults.length === 0 && !searchLoading && !searchError && searchQuery && (
+              <div className="no-results">No results found.</div>
+            )}
+          </section>
 
-      {/* Footer */}
-      <footer className="plugin-footer">
-        <small>
-          Updated: {stats.timestamp ? new Date(stats.timestamp).toLocaleTimeString() : 'unknown'}
-          {stats.cached !== undefined && ` · Cached: ${stats.cached ? 'yes' : 'no'}`}
-          {stats.cache_age !== undefined && ` · Age: ${stats.cache_age}s`}
-        </small>
-      </footer>
-    </>
-  ) : null}
+          <footer className="plugin-footer">
+            <small>
+              Updated: {stats.timestamp ? new Date(stats.timestamp).toLocaleTimeString() : 'unknown'}
+              {stats.cached !== undefined && ` · Cached: ${stats.cached ? 'yes' : 'no'}`}
+              {stats.cache_age !== undefined && ` · Age: ${stats.cache_age}s`}
+            </small>
+          </footer>
+        </>
+      ) : null}
+    </div>
+  );
 }
