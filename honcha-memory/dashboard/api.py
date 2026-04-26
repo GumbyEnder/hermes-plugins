@@ -17,7 +17,7 @@ router = APIRouter()
 # Configuration
 HERMES_HOME = Path(os.environ.get("HERMES_HOME", "~/.hermes")).expanduser()
 HONCHA_ROOT = Path("/home/gumbyender/honcha")
-HONCHA_DB_CONTAINER = "honcha-database-1"
+HONCHA_DB_CONTAINER = "honcho-database-1"
 HONCHA_DB_NAME = "honcha"
 HONCHA_DB_USER = "honcha"
 HONCHA_API_URL = "http://localhost:8002"
@@ -165,14 +165,25 @@ async def get_queue():
 async def search_memories(request: Request):
     """
     Proxy semantic search to Honcha.
-    Body: { "query": "text", "limit": 10 }
+    Accepts either JSON body { "query": "text", "limit": 10 }
+    or form-encoded body query=text&limit=10.
     """
     try:
-        body = await request.json()
+        # Try JSON first
+        try:
+            body = await request.json()
+            query_text = body.get("query", "").strip()
+            limit = int(body.get("limit", 10))
+        except Exception:
+            # Fallback to form-encoded
+            form = await request.form()
+            query_text = form.get("query", "").strip()
+            limit = int(form.get("limit", 10))
     except Exception:
-        raise HTTPException(status_code=400, detail="Invalid JSON body")
+        raise HTTPException(status_code=400, detail="Invalid request body")
     
-    query_text = body.get("query", "").strip()
+    if not query_text:
+        raise HTTPException(status_code=400, detail="Query string required")
     limit = min(int(body.get("limit", 10)), 50)  # cap at 50
     
     if not query_text:
