@@ -1,13 +1,13 @@
-# Honcha Memory Plugin for Hermes Dashboard
+# Honcho Memory Plugin for Hermes Dashboard
 
-Plugin for monitoring Honcha local memory system — counts, rates, queue health, and search.
+Plugin for monitoring Honcho local memory system — counts, rates, queue health, and search.
 
 ## Features
 
 - Live stats: documents, messages, embeddings, 24h formation rate
 - Queue status: pending vs completed tasks by type
 - Per-agent memory breakdown
-- Semantic search proxy (to Honcha)
+- Semantic search proxy (to Honcho)
 - Health indicator
 
 ## Installation
@@ -15,7 +15,7 @@ Plugin for monitoring Honcha local memory system — counts, rates, queue health
 The plugin is auto-discovered from `~/.hermes/plugins/honcha-memory/`.
 
 To install manually:
-```bash
+|```
 # Symlink from NAS repo to Hermes plugins dir
 ln -s /mnt/nas/github_repos/hermes-plugins/honcha-memory ~/.hermes/plugins/
 ```
@@ -40,7 +40,7 @@ All mounted under `/api/plugins/honcha-memory/`:
 ## Development
 
 Code lives in NAS GitHub repos:
-```
+|```
 /mnt/nas/github_repos/hermes-plugins/honcha-memory/
 ├── dashboard/
 │   ├── api.py          # FastAPI backend

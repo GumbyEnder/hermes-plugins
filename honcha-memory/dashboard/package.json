@@ -1,7 +1,7 @@
 {
   "name": "hermes-plugin-honcha-memory",
   "version": "0.1.0",
-  "description": "Honcha memory monitoring plugin for Hermes Dashboard",
+  "description": "Honcho memory monitoring plugin for Hermes Dashboard",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",

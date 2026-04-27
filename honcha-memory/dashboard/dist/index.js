@@ -14,7 +14,11 @@
     const { cn } = SDK.utils;
     console.log("[honcha] Destructuring complete");
 
-    function StatCard(_a) {
+  function exportCSV(e){var t=["Metric","Value"];
+t.push(["Documents",e.documents]);t.push(["Messages",e.messages]);t.push(["Embeddings",e.embeddings]);t.push(["Documents (24h)",e.documents_24h]);t.push(["Queue Pending",e.queue_pending]);t.push(["Healthy",e.healthy]);t.push([""]);
+t.push(["Agent","Documents"]);if(e.peers){Object.entries(e.peers).forEach(function(r){t.push([r[0],r[1]])})}var n=t.map(function(e){return e.join(",")}).join("\n"),o=new Blob([n],{type:"text/csv"}),a=URL.createObjectURL(o),l=document.createElement("a");l.href=a;l.download="honcho-memory-"+new Date().toISOString().slice(0,10)+".csv";l.click();URL.revokeObjectURL(a)}
+
+  function StatCard(_a) {
       var label = _a.label, value = _a.value, sub = _a.sub;
       return React.createElement("div", { className: "stat-card" },
         React.createElement("div", { className: "stat-label" }, label),
@@ -23,11 +27,14 @@
       );
     }
 
+    function timeAgo(e){if(!e)return"—";var t=(Date.now()-new Date(e).getTime())/1e3;return t<60?"just now":t<3600?Math.floor(t/60)+"m ago":t<86400?Math.floor(t/3600)+"h ago":Math.floor(t/86400)+"d ago"}
+
     function PeerRow(_a) {
-      var peer = _a.peer, count = _a.count;
+      var peer = _a.peer, count = _a.count, lastSeen = _a.lastSeen;
       return React.createElement("tr", null,
         React.createElement("td", { className: "peer-name" }, peer),
-        React.createElement("td", { className: "peer-count" }, count.toLocaleString())
+        React.createElement("td", { className: "peer-count" }, count.toLocaleString()),
+        React.createElement("td", { className: "peer-last" }, timeAgo(lastSeen))
       );
     }
 
@@ -108,12 +115,7 @@
       if (error) return React.createElement("div", { className: "error" }, "Error: " + error);
       if (!stats) return React.createElement("div", null, "No data");
 
-      var peerRows = stats.peers
-        ? Object.entries(stats.peers).map(function (_a) {
-            var peer = _a[0], count = _a[1];
-            return React.createElement(PeerRow, { key: peer, peer: peer, count: count });
-          })
-        : null;
+      var peerRows = stats.peers_detail ? Object.entries(stats.peers_detail).map(function(e){return React.createElement(PeerRow,{key:e[0],peer:e[0],count:e[1].count,lastSeen:e[1].last_seen});}) : (stats.peers ? Object.entries(stats.peers).map(function(_a){var peer=_a[0];var count=_a[1];return React.createElement(PeerRow,{key:peer,peer:peer,count:count});}) : null);
 
       var resultCards = searchResults.map(function (r) {
         return React.createElement(SearchResultCard, { key: r.id, result: r });
@@ -124,7 +126,8 @@
           React.createElement("h1", null, "Honcha Memory"),
           React.createElement("div", {
             className: cn("health-badge", stats.healthy ? "healthy" : "unhealthy")
-          }, stats.healthy ? "Healthy" : "Offline")
+          }, stats.healthy ? "Healthy" : "Offline"),
+          React.createElement("button", {onClick: function() { return exportCSV(stats); }, className: "export-btn", title: "Export CSV"}, "Export CSV")
         ),
         React.createElement("div", { className: "stats-grid" },
           React.createElement(StatCard, { label: "Documents", value: stats.documents, sub: "+" + stats.documents_24h + " in 24h" }),
@@ -138,7 +141,8 @@
             React.createElement("thead", null,
               React.createElement("tr", null,
                 React.createElement("th", null, "Agent"),
-                React.createElement("th", { style: { textAlign: "right" } }, "Count")
+                React.createElement("th", { style: { textAlign: "right" } }, "Docs"),
+                React.createElement("th", { style: { textAlign: "right" } }, "Last Active")
               )
             ),
             React.createElement("tbody", null, peerRows)

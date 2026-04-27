@@ -91,14 +91,22 @@ async def get_stats():
     docs, msgs, vecs, docs_24h, queue_pending = map(str.strip, vals)
     
     # Per-peer breakdown
-    peer_query = "SELECT observer, COUNT(*) FROM documents GROUP BY observer ORDER BY COUNT(*) DESC"
+    peer_query = """SELECT observer, COUNT(*) as doc_count, MAX(created_at) as last_seen
+FROM documents GROUP BY observer ORDER BY doc_count DESC"""
     peer_rows, err = _docker_exec_psql(peer_query)
     peers = {}
+    peers_detail = {}
     if not err and peer_rows:
         for line in peer_rows.split('\n'):
             if '|' in line:
-                obs, cnt = line.split('|')
-                peers[obs.strip()] = int(cnt.strip())
+                parts = line.split('|')
+                if len(parts) >= 3:
+                    obs, cnt, last = parts[0].strip(), parts[1].strip(), parts[2].strip()
+                    peers[obs] = int(cnt)
+                    peers_detail[obs] = {"count": int(cnt), "last_seen": last if last and last != "None" else None}
+                elif len(parts) >= 2:
+                    obs, cnt = parts[0].strip(), parts[1].strip()
+                    peers[obs] = int(cnt)
     
     payload = {
         "documents": int(docs),
@@ -107,6 +115,7 @@ async def get_stats():
         "documents_24h": int(docs_24h),
         "queue_pending": int(queue_pending),
         "peers": peers,
+        "peers_detail": peers_detail,
         "healthy": int(queue_pending) < 10,
         "cached": False,
         "cache_age": 0,

@@ -21,7 +21,7 @@ interface SearchResult {
   score?: number;
 }
 
-export default function HonchaMemory() {
+export default function HonchoMemory() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,9 +75,9 @@ export default function HonchaMemory() {
   }, [fetchStats]);
 
   return (
-    <div className="honcha-memory-plugin">
+    <div className="honcho-memory-plugin">
       <header className="plugin-header">
-        <h1>Honcha Memory</h1>
+        <h1>Honcho Memory</h1>
         <div className={`health-badge ${stats?.healthy ? 'healthy' : 'unhealthy'}`}>
           {stats?.healthy ? 'Healthy' : 'Offline'}
         </div>

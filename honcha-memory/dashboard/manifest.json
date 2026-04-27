@@ -1,7 +1,7 @@
 {
   "name": "honcha-memory",
-  "label": "Honcha Memory",
-  "description": "Monitor and manage Honcha local memory \u2014 live stats, queue health, semantic search, and operations",
+  "label": "Honcho Memory",
+"description": "Monitor and manage Honcho local memory — live stats, queue health, semantic search, and operations"
   "icon": "BrainCircuit",
   "version": "0.1.0",
   "entry": "dist/index.js",
