@@ -1,1 +1,1 @@
-"""Tests for honcha-memory plugin"
+"""Tests for Honcho Memory Dashboard Plugin."""

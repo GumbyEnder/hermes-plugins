@@ -193,10 +193,7 @@ async def search_memories(request: Request):
     
     if not query_text:
         raise HTTPException(status_code=400, detail="Query string required")
-    limit = min(int(body.get("limit", 10)), 50)  # cap at 50
-    
-    if not query_text:
-        raise HTTPException(status_code=400, detail="Query string required")
+    limit = min(limit, 50)  # cap at 50
     
     try:
         import urllib.request
