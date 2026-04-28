@@ -173,6 +173,76 @@ def test_stats_peers_detail_has_timestamps():
 
 
 # ---------------------------------------------------------------------------
+# Detail drill-down endpoint tests (Docker-dependent)
+# ---------------------------------------------------------------------------
+
+@requires_docker
+def test_documents_endpoint():
+    """GET /documents returns items list with id, content, observer, created_at."""
+    resp = client.get("/api/plugins/honcha-memory/documents?limit=5")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "items" in data
+    assert "total" in data
+    assert "limit" in data
+    assert "offset" in data
+    assert isinstance(data["items"], list)
+    assert data["limit"] == 5
+    if data["items"]:
+        item = data["items"][0]
+        for field in ["id", "content", "observer", "created_at"]:
+            assert field in item, f"Missing {field} in document item"
+
+@requires_docker
+def test_messages_endpoint():
+    """GET /messages returns items list with id, content, peer_name, created_at."""
+    resp = client.get("/api/plugins/honcha-memory/messages?limit=5")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "items" in data
+    assert "total" in data
+    assert isinstance(data["items"], list)
+    if data["items"]:
+        item = data["items"][0]
+        for field in ["id", "content", "peer_name", "created_at"]:
+            assert field in item, f"Missing {field} in message item"
+
+@requires_docker
+def test_embeddings_endpoint():
+    """GET /embeddings returns items list with id, message_id, created_at."""
+    resp = client.get("/api/plugins/honcha-memory/embeddings?limit=5")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "items" in data
+    assert "total" in data
+    assert isinstance(data["items"], list)
+    if data["items"]:
+        item = data["items"][0]
+        for field in ["id", "message_id", "created_at"]:
+            assert field in item, f"Missing {field} in embedding item"
+
+@requires_docker
+def test_documents_pagination():
+    """Offset pagination works — offset=5 returns different items."""
+    resp1 = client.get("/api/plugins/honcha-memory/documents?limit=2&offset=0")
+    resp2 = client.get("/api/plugins/honcha-memory/documents?limit=2&offset=2")
+    if resp1.json()["total"] > 2:
+        ids1 = [i["id"] for i in resp1.json()["items"]]
+        ids2 = [i["id"] for i in resp2.json()["items"]]
+        assert ids1 != ids2, "Pagination offset should return different items"
+
+@requires_docker
+def test_detail_endpoints_default_limit():
+    """No limit param returns data (default limit applies)."""
+    for ep in ["documents", "messages", "embeddings"]:
+        resp = client.get(f"/api/plugins/honcha-memory/{ep}")
+        assert resp.status_code == 200, f"{ep} failed with status {resp.status_code}"
+        data = resp.json()
+        assert "items" in data, f"{ep} missing items"
+        assert "total" in data, f"{ep} missing total"
+
+
+# ---------------------------------------------------------------------------
 # Frontend asset verification (requires dashboard running)
 # ---------------------------------------------------------------------------
 
