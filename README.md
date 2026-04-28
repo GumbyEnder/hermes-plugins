@@ -114,11 +114,11 @@ systemctl --user restart hermes-dashboard
 
 | Priority | Features | Estimate |
 |----------|----------|----------|
-| 🔴 HIGH | Search highlighting, load-more pagination, deriver health widget | 6.5h |
+| 🔴 HIGH | Search highlighting, **volume chart (line/area/bar)**, load-more pagination, search-to-expand, deriver health widget | 12h |
 | 🟡 MEDIUM | Per-agent drill-down, memory similarity search | 10h |
-| 🟢 LOW | Dark cyberpunk theme, heatmap calendar, network graph, embedding projection, WebSocket stream | 33.5h |
+| 🟢 LOW | Dark cyberpunk theme, heatmap calendar, export filtered CSV, quick stats bar, network graph, embedding projection, WebSocket stream | 35h |
 
-Full kanban board tracks 14 backlog items with owner assignments and status.
+Full kanban board tracks 15 backlog items with owner assignments and status.
 
 ---
 
