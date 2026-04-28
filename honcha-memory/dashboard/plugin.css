@@ -177,6 +177,32 @@
   box-shadow: 0 0 20px var(--accent-glow);
 }
 
+.honcho-memory-plugin .stat-card-clickable:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.honcho-memory-plugin .stat-card-clickable::after {
+  content: "↗";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.honcho-memory-plugin .stat-card-clickable:hover::after {
+  opacity: 1;
+}
+
+.honcho-memory-plugin .btn-back:hover {
+  border-color: var(--accent) !important;
+  background: rgba(123, 108, 217, 0.1) !important;
+}
+
 .honcho-memory-plugin .stat-label {
   font-size: 0.76rem;
   color: var(--fg-muted);

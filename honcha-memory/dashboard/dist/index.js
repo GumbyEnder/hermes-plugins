@@ -46,7 +46,7 @@
       var min = Math.min.apply(Math, values);
       var max = Math.max.apply(Math, values);
       var range = max - min || 1;
-      var w = Math.max(40, Math.min(120, values.length * 4)); // clamp width
+      var w = Math.max(40, Math.min(120, values.length * 4));
       var h = 24;
       var pts = values.map(function(v, i) {
         return [ (i / (values.length - 1)) * w, h - ((v - min) / range) * h ];
@@ -79,10 +79,16 @@
       );
     }
 
-    // StatCard: displays a metric with optional subtext and sparkline
+    // StatCard: displays a metric with optional subtext, sparkline, and click handler
     function StatCard(props) {
-      var label = props.label, value = props.value, sub = props.sub, sparkValues = props.sparkValues;
-      return React.createElement("div", { className: "stat-card" },
+      var label = props.label, value = props.value, sub = props.sub,
+          sparkValues = props.sparkValues, onClick = props.onClick, clickable = props.clickable;
+      var className = "stat-card" + (clickable ? " stat-card-clickable" : "");
+      return React.createElement("div", {
+        className: className,
+        onClick: onClick || null,
+        style: clickable ? { cursor: "pointer" } : null
+      },
         React.createElement("div", { className: "stat-label" }, label),
         React.createElement("div", { className: "stat-value" },
           typeof value === "number" ? value.toLocaleString() : value
@@ -127,6 +133,35 @@
       );
     }
 
+    // Detail list item (for documents/messages/embeddings drill-down)
+    function DetailItem(props) {
+      var item = props.item, type = props.type;
+      var meta = [];
+      if (type === "documents") {
+        if (item.observer) meta.push(React.createElement("span", { className: "result-observer", key: "obs" }, item.observer));
+        if (item.observed) meta.push(React.createElement("span", { className: "result-observer", key: "obd" }, "→ " + item.observed));
+      }
+      if (type === "messages") {
+        if (item.peer_name) meta.push(React.createElement("span", { className: "result-observer", key: "peer" }, item.peer_name));
+        if (item.token_count) meta.push(React.createElement("span", { className: "result-score", key: "tok" }, item.token_count + " tokens"));
+      }
+      if (type === "embeddings") {
+        if (item.peer_name) meta.push(React.createElement("span", { className: "result-observer", key: "peer" }, item.peer_name));
+        if (item.message_id) meta.push(React.createElement("span", { className: "result-id", key: "mid" }, item.message_id));
+      }
+      return React.createElement("div", { className: "result-card" },
+        React.createElement("div", { className: "result-header" },
+          React.createElement("span", { className: "result-id" }, item.id),
+          item.session_name && React.createElement("span", { className: "result-observer" }, item.session_name),
+          item.created_at && React.createElement("span", { className: "result-score" }, timeAgo(item.created_at)),
+          meta
+        ),
+        item.content && React.createElement("div", { className: "result-content" },
+          item.content.length > 300 ? item.content.substring(0, 300) + "…" : item.content
+        )
+      );
+    }
+
     // ============================================================
     //  MAIN COMPONENT
     // ============================================================
@@ -141,6 +176,12 @@
       var _g = useState(null), searchError = _g[0], setSearchError = _g[1];
       var sparklineRef = useRef({ documents: [], messages: [], embeddings: [], queue_pending: [] });
 
+      // Detail drill-down state
+      var _h = useState(null), detailView = _h[0], setDetailView = _h[1];
+      var _i = useState(null), detailData = _i[0], setDetailData = _i[1];
+      var _j = useState(false), detailLoading = _j[0], setDetailLoading = _j[1];
+      var _k = useState(null), detailError = _k[0], setDetailError = _k[1];
+
       var fetchStats = useCallback(function() {
         setLoading(true);
         return fetch("/api/plugins/honcha-memory/stats")
@@ -152,7 +193,6 @@
             setStats(data);
             setError(null);
             setLoading(false);
-            // Push to sparkline history (keep last 50)
             var sl = sparklineRef.current;
             ["documents","messages","embeddings","queue_pending"].forEach(function(k) {
               sl[k].push(data[k]);
@@ -191,13 +231,84 @@
           });
       };
 
+      var openDetail = function(type) {
+        setDetailView(type);
+        setDetailLoading(true);
+        setDetailError(null);
+        setDetailData(null);
+        fetch("/api/plugins/honcha-memory/" + type + "?limit=50")
+          .then(function(res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          })
+          .then(function(data) {
+            setDetailData(data);
+            setDetailLoading(false);
+          })
+          .catch(function(err) {
+            setDetailError(err.message);
+            setDetailLoading(false);
+          });
+      };
+
+      var closeDetail = function() {
+        setDetailView(null);
+        setDetailData(null);
+        setDetailError(null);
+      };
+
       useEffect(function() {
         fetchStats();
         var interval = setInterval(fetchStats, 30000);
         return function() { clearInterval(interval); };
       }, [fetchStats]);
 
-      // Loading & error states
+      // ============================================================
+      //  DETAIL VIEW
+      // ============================================================
+      if (detailView) {
+        var detailTitle = detailView.charAt(0).toUpperCase() + detailView.slice(1);
+        var detailItems = [];
+        if (detailData && detailData.items) {
+          detailItems = detailData.items.map(function(item) {
+            return React.createElement(DetailItem, { key: item.id, item: item, type: detailView });
+          });
+        }
+        return React.createElement("div", { className: "honcho-memory-plugin" },
+          React.createElement("header", { className: "plugin-header" },
+            React.createElement("div", { className: "header-branding" },
+              React.createElement("button", {
+                className: "btn-back",
+                onClick: closeDetail,
+                style: {
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border)",
+                  color: "var(--fg-primary)",
+                  borderRadius: "8px",
+                  padding: "8px 16px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  fontFamily: "inherit"
+                }
+              }, "← Back"),
+              React.createElement("div", null,
+                React.createElement("h1", null, detailTitle),
+                React.createElement("p", { className: "header-subtitle" },
+                  detailData ? detailData.total + " total" : "Loading…"
+                )
+              )
+            )
+          ),
+          detailLoading && React.createElement("div", { className: "plugin-status loading" }, "Loading " + detailView + "…"),
+          detailError && React.createElement("div", { className: "plugin-status error" }, "Error: " + detailError),
+          !detailLoading && !detailError && detailData && detailItems.length === 0 &&
+            React.createElement("div", { className: "plugin-status empty" }, "No " + detailView + " found"),
+          !detailLoading && !detailError && detailItems.length > 0 &&
+            React.createElement("div", { className: "search-results" }, detailItems)
+        );
+      }
+
+      // Loading & error states (overview)
       if (loading && !stats) {
         return React.createElement("div", { className: "plugin-status loading" }, "Loading...");
       }
@@ -227,7 +338,7 @@
       });
 
       // ============================================================
-      //  RENDER
+      //  OVERVIEW RENDER
       // ============================================================
       return React.createElement("div", { className: "honcho-memory-plugin" },
 
@@ -266,25 +377,31 @@
           )
         ),
 
-        // ==================== STATS GRID ====================
+        // ==================== STATS GRID (clickable) ====================
         React.createElement("section", { className: "section" },
-          React.createElement("h2", { className: "section-title" }, "Current Metrics"),
+          React.createElement("h2", { className: "section-title" }, "Current Metrics — click for details"),
           React.createElement("div", { className: "stats-grid" },
             React.createElement(StatCard, {
               label: "Documents",
               value: stats.documents,
               sub: "+" + stats.documents_24h + " new in 24h",
-              sparkValues: sparklineRef.current.documents
+              sparkValues: sparklineRef.current.documents,
+              clickable: true,
+              onClick: function() { openDetail("documents"); }
             }),
             React.createElement(StatCard, {
               label: "Messages",
               value: stats.messages,
-              sparkValues: sparklineRef.current.messages
+              sparkValues: sparklineRef.current.messages,
+              clickable: true,
+              onClick: function() { openDetail("messages"); }
             }),
             React.createElement(StatCard, {
               label: "Embeddings",
               value: stats.embeddings,
-              sparkValues: sparklineRef.current.embeddings
+              sparkValues: sparklineRef.current.embeddings,
+              clickable: true,
+              onClick: function() { openDetail("embeddings"); }
             }),
             React.createElement(StatCard, {
               label: "Queue",

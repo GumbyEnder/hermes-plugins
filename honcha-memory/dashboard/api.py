@@ -258,3 +258,126 @@ async def health():
         return {"status": "ok", "db": "connected"}
     except Exception as e:
         return {"status": "error", "error": str(e)}
+
+
+# ---------------------------------------------------------------------------
+# Detail drill-down endpoints — paginated lists for Documents, Messages, Embeddings
+# ---------------------------------------------------------------------------
+
+@router.get("/documents")
+async def get_documents(limit: int = 50, offset: int = 0):
+    """Paginated document list (memories)."""
+    query = f"""
+    SELECT id, content, observer, created_at, session_name, observed
+    FROM documents
+    ORDER BY created_at DESC
+    LIMIT {limit} OFFSET {offset}
+    """
+    rows, err = _docker_exec_psql(query)
+    if err:
+        raise HTTPException(status_code=500, detail=f"DB error: {err}")
+
+    count_q = "SELECT COUNT(*) FROM documents"
+    total_raw, _ = _docker_exec_psql(count_q)
+    total = int(total_raw.strip()) if total_raw else 0
+
+    items = []
+    if rows:
+        for line in rows.split('\n'):
+            if '|' in line:
+                parts = line.split('|')
+                if len(parts) >= 6:
+                    items.append({
+                        "id": parts[0].strip(),
+                        "content": parts[1].strip()[:500],
+                        "observer": parts[2].strip(),
+                        "created_at": parts[3].strip(),
+                        "session_name": parts[4].strip() if parts[4].strip() != "" else None,
+                        "observed": parts[5].strip() if len(parts) > 5 and parts[5].strip() != "" else None,
+                    })
+
+    return {
+        "items": items,
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+    }
+
+
+@router.get("/messages")
+async def get_messages(limit: int = 50, offset: int = 0):
+    """Paginated message log."""
+    query = f"""
+    SELECT public_id, content, peer_name, created_at, session_name, token_count
+    FROM messages
+    ORDER BY created_at DESC
+    LIMIT {limit} OFFSET {offset}
+    """
+    rows, err = _docker_exec_psql(query)
+    if err:
+        raise HTTPException(status_code=500, detail=f"DB error: {err}")
+
+    count_q = "SELECT COUNT(*) FROM messages"
+    total_raw, _ = _docker_exec_psql(count_q)
+    total = int(total_raw.strip()) if total_raw else 0
+
+    items = []
+    if rows:
+        for line in rows.split('\n'):
+            if '|' in line:
+                parts = line.split('|')
+                if len(parts) >= 6:
+                    items.append({
+                        "id": parts[0].strip(),
+                        "content": parts[1].strip()[:500],
+                        "peer_name": parts[2].strip(),
+                        "created_at": parts[3].strip(),
+                        "session_name": parts[4].strip() if parts[4].strip() != "" else None,
+                        "token_count": int(parts[5].strip()) if parts[5].strip().isdigit() else 0,
+                    })
+
+    return {
+        "items": items,
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+    }
+
+
+@router.get("/embeddings")
+async def get_embeddings(limit: int = 50, offset: int = 0):
+    """Paginated embedding metadata (no vector data)."""
+    query = f"""
+    SELECT e.id, e.message_id, e.created_at, e.peer_name, e.session_name
+    FROM message_embeddings e
+    ORDER BY e.created_at DESC
+    LIMIT {limit} OFFSET {offset}
+    """
+    rows, err = _docker_exec_psql(query)
+    if err:
+        raise HTTPException(status_code=500, detail=f"DB error: {err}")
+
+    count_q = "SELECT COUNT(*) FROM message_embeddings"
+    total_raw, _ = _docker_exec_psql(count_q)
+    total = int(total_raw.strip()) if total_raw else 0
+
+    items = []
+    if rows:
+        for line in rows.split('\n'):
+            if '|' in line:
+                parts = line.split('|')
+                if len(parts) >= 5:
+                    items.append({
+                        "id": parts[0].strip(),
+                        "message_id": parts[1].strip(),
+                        "created_at": parts[2].strip(),
+                        "peer_name": parts[3].strip() if parts[3].strip() != "" else None,
+                        "session_name": parts[4].strip() if len(parts) > 4 and parts[4].strip() != "" else None,
+                    })
+
+    return {
+        "items": items,
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+    }
