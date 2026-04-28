@@ -142,7 +142,6 @@
       var sparklineRef = useRef({ documents: [], messages: [], embeddings: [], queue_pending: [] });
 
       var fetchStats = useCallback(function() {
-        if (loading) return Promise.resolve();
         setLoading(true);
         return fetch("/api/plugins/honcha-memory/stats")
           .then(function(res) {
