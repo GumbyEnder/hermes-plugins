@@ -10,6 +10,40 @@ Custom dashboard plugins for [Hermes Agent](https://github.com/NousResearch/herm
 
 The Honcho Memory Plugin connects the Hermes Dashboard directly to a self-hosted [Honcho](https://honcho.dev) memory instance, giving you real-time visibility into what your AI agents remember.
 
+### Screenshots
+
+**Overview — Stats, Queue Gauge, Agent Table**
+
+![Honcho Memory Overview](https://raw.githubusercontent.com/GumbyEnder/hermes-plugins/master/docs/images/overview-stats.png)
+
+*Live memory statistics with sparklines, color-coded queue health gauge, per-agent breakdown with "Last Active" timestamps, and semantic search.*
+
+---
+
+**Detail Drill-Down — Documents View**
+
+![Documents Detail View](https://raw.githubusercontent.com/GumbyEnder/hermes-plugins/master/docs/images/detail-documents.png)
+
+*Click any stat card to drill into paginated detail views. Documents show observer/observed agents, session names, and 300-char content previews.*
+
+---
+
+**Detail Drill-Down — Messages View**
+
+![Messages Detail View](https://raw.githubusercontent.com/GumbyEnder/hermes-plugins/master/docs/images/detail-messages.png)
+
+*Messages view with peer names, token counts, session names, and relative timestamps. All clickable from the overview stat cards.*
+
+---
+
+**Semantic Search**
+
+![Semantic Search](https://raw.githubusercontent.com/GumbyEnder/hermes-plugins/master/docs/images/overview-search.png)
+
+*Proxy semantic search through Honcho's vector database. Results show relevance scores, observer agents, and content previews.*
+
+---
+
 ### Why It Matters
 
 Hermes agents use Honcho to build persistent memory across sessions — storing facts, observations, and conversation context as vector embeddings. Without this plugin, that memory is invisible. With it, you get:
@@ -18,41 +52,6 @@ Hermes agents use Honcho to build persistent memory across sessions — storing 
 - **Deep exploration** — Drill into documents, messages, and embeddings with paginated detail views
 - **Semantic search** — Query agent memories by meaning, not keywords
 - **System health** — Deriver status, processing rates, configuration snapshot
-
-### What You See
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│  🕷️  Honcho Memory                    Queue 0 ▓░░░░  📥 CSV │
-│      Intelligence stream from your agents                    │
-├──────────────────────────────────────────────────────────────┤
-│                                                              │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐     │
-│  │DOCUMENTS │  │ MESSAGES │  │EMBEDDINGS│  │  QUEUE   │     │
-│  │   22  ↗  │  │   39  ↗  │  │   11  ↗  │  │    0     │     │
-│  │ +2 in 24h│  │   ╱╲    │  │   ╱╲    │  │ pending   │     │
-│  │   ╱╲    │  │  ╱  ╲   │  │ ╱    ╲  │  │   ╱╲    │     │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘     │
-│                                                              │
-│  Agent Memory Usage                                          │
-│  ┌──────────────┬──────┬─────────────┐                       │
-│  │ Agent        │ Docs │ Last Active │                       │
-│  ├──────────────┼──────┼─────────────┤                       │
-│  │ boromir      │   12 │ 20m ago     │                       │
-│  │ frodo        │    8 │ 1h ago      │                       │
-│  │ aragorn      │    2 │ 3d ago      │                       │
-│  └──────────────┴──────┴─────────────┘                       │
-│                                                              │
-│  Semantic Search                         [Search memories…]  │
-│  ┌──────────────────────────────────────┐                    │
-│  │ "How does the Zeeva biofeedback..."  │  94.2%             │
-│  │ frodo · Session zeeva-admin          │                    │
-│  ├──────────────────────────────────────┤                    │
-│  │ "The SchreckNet terminal should..."  │  87.1%             │
-│  │ boromir · Session schrecknet-ui      │                    │
-│  └──────────────────────────────────────┘                    │
-└──────────────────────────────────────────────────────────────┘
-```
 
 ### Architecture
 
