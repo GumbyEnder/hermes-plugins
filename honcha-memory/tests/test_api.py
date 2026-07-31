@@ -242,6 +242,22 @@ def test_detail_endpoints_default_limit():
         assert "total" in data, f"{ep} missing total"
 
 
+@pytest.mark.parametrize("endpoint", ["documents", "messages", "embeddings"])
+@pytest.mark.parametrize(
+    "query",
+    [
+        "limit=0",
+        "limit=-1",
+        "limit=101",
+        "offset=-1",
+    ],
+)
+def test_detail_endpoints_reject_invalid_pagination(endpoint, query):
+    """Invalid pagination returns 422 before database access."""
+    resp = client.get(f"/api/plugins/honcha-memory/{endpoint}?{query}")
+    assert resp.status_code == 422
+
+
 # ---------------------------------------------------------------------------
 # Frontend asset verification (requires dashboard running)
 # ---------------------------------------------------------------------------

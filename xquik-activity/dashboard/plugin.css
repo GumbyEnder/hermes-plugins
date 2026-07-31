@@ -1,0 +1,194 @@
+.xquik-activity-plugin {
+  --xquik-accent: #2dd4bf;
+  --xquik-border: color-mix(in srgb, currentColor 14%, transparent);
+  --xquik-muted: color-mix(in srgb, currentColor 64%, transparent);
+  --xquik-panel: color-mix(in srgb, currentColor 5%, transparent);
+
+  display: grid;
+  gap: 28px;
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 28px;
+}
+
+.xquik-activity-plugin .xquik-header {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.xquik-activity-plugin .xquik-header h1,
+.xquik-activity-plugin .xquik-header p,
+.xquik-activity-plugin .xquik-section h2 {
+  margin: 0;
+}
+
+.xquik-activity-plugin .xquik-header p,
+.xquik-activity-plugin .xquik-stat-detail,
+.xquik-activity-plugin .xquik-event-source,
+.xquik-activity-plugin .xquik-more,
+.xquik-activity-plugin .xquik-footer {
+  color: var(--xquik-muted);
+}
+
+.xquik-activity-plugin .xquik-button {
+  background: var(--xquik-accent);
+  border: 0;
+  border-radius: 8px;
+  color: #042f2e;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 10px 16px;
+}
+
+.xquik-activity-plugin .xquik-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.xquik-activity-plugin .xquik-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--xquik-accent) 45%, transparent);
+  outline-offset: 3px;
+}
+
+.xquik-activity-plugin .xquik-stats-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.xquik-activity-plugin .xquik-stat-card {
+  background: var(--xquik-panel);
+  border: 1px solid var(--xquik-border);
+  border-radius: 12px;
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+}
+
+.xquik-activity-plugin .xquik-stat-label {
+  color: var(--xquik-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.xquik-activity-plugin .xquik-stat-value {
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+
+.xquik-activity-plugin .xquik-section {
+  display: grid;
+  gap: 14px;
+}
+
+.xquik-activity-plugin .xquik-table-wrap {
+  border: 1px solid var(--xquik-border);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.xquik-activity-plugin .xquik-table {
+  border-collapse: collapse;
+  min-width: 680px;
+  width: 100%;
+}
+
+.xquik-activity-plugin .xquik-table th,
+.xquik-activity-plugin .xquik-table td {
+  border-bottom: 1px solid var(--xquik-border);
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.xquik-activity-plugin .xquik-table th {
+  color: var(--xquik-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.xquik-activity-plugin .xquik-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.xquik-activity-plugin .xquik-status {
+  border: 1px solid var(--xquik-border);
+  border-radius: 999px;
+  display: inline-block;
+  padding: 3px 8px;
+}
+
+.xquik-activity-plugin .xquik-status-active {
+  border-color: var(--xquik-accent);
+  color: var(--xquik-accent);
+}
+
+.xquik-activity-plugin .xquik-event-list {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.xquik-activity-plugin .xquik-event-item {
+  background: var(--xquik-panel);
+  border: 1px solid var(--xquik-border);
+  border-radius: 10px;
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.xquik-activity-plugin .xquik-event-heading {
+  align-items: baseline;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.xquik-activity-plugin .xquik-event-heading span {
+  color: var(--xquik-muted);
+  font-size: 0.8rem;
+}
+
+.xquik-activity-plugin .xquik-empty,
+.xquik-activity-plugin.xquik-state,
+.xquik-activity-plugin .xquik-warning {
+  border: 1px dashed var(--xquik-border);
+  border-radius: 10px;
+  margin: 0;
+  padding: 18px;
+}
+
+.xquik-activity-plugin .xquik-more {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.xquik-activity-plugin .xquik-warning {
+  border-style: solid;
+}
+
+.xquik-activity-plugin .xquik-footer {
+  border-top: 1px solid var(--xquik-border);
+  font-size: 0.8rem;
+  padding-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .xquik-activity-plugin {
+    padding: 18px;
+  }
+
+  .xquik-activity-plugin .xquik-header,
+  .xquik-activity-plugin .xquik-event-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

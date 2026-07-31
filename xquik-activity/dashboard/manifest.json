@@ -1,0 +1,14 @@
+{
+  "name": "xquik-activity",
+  "label": "Xquik Activity",
+  "description": "Review Xquik credits, monitors, and recent events without leaving Hermes",
+  "icon": "Activity",
+  "version": "0.1.0",
+  "entry": "dist/index.js",
+  "css": "plugin.css",
+  "tab": {
+    "path": "/xquik-activity",
+    "position": "end"
+  },
+  "api": "api.py"
+}

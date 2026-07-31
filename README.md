@@ -4,6 +4,15 @@ Custom dashboard plugins for [Hermes Agent](https://github.com/NousResearch/herm
 
 ---
 
+## Xquik Activity Plugin
+
+Review Xquik credits, monitors, and recent events inside Hermes Dashboard.
+The API key stays in the server process. The browser receives read-only data.
+
+See [the installation and safety guide](xquik-activity/README.md).
+
+---
+
 ## 🕷️ Honcho Memory Plugin
 
 **Monitor, explore, and manage your agents' long-term memory.**
@@ -103,12 +112,14 @@ systemctl --user restart hermes-dashboard
 | GET | `/config` | Configuration snapshot (secrets redacted) |
 | GET | `/health` | Database connectivity check |
 
+Detail endpoints accept limits from 1 through 100. Offsets must be nonnegative.
+
 ### Tech Stack
 
 - **Backend:** Python FastAPI, `docker exec` PostgreSQL queries, Honcho API proxy
 - **Frontend:** React IIFE via Hermes Plugin SDK, SVG sparklines, scoped CSS
 - **Data:** Honcho PostgreSQL (pgvector), Honcho REST API
-- **Testing:** 20 pytest tests (config, search validation, detail endpoints, Docker-dependent integration)
+- **Testing:** pytest coverage for config, search, pagination, detail endpoints, and Docker integration
 
 ### Roadmap
 
@@ -136,3 +147,6 @@ See the [plugin development skill](https://github.com/NousResearch/hermes-agent/
 ## License
 
 MIT — part of the Hermes plugin ecosystem.
+
+Xquik is an independent third-party service. Not affiliated with X Corp.
+"Twitter" and "X" are trademarks of X Corp.
