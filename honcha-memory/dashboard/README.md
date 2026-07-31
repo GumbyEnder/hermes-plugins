@@ -36,9 +36,9 @@ All mounted under `/api/plugins/honcha-memory/`:
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
 | GET | `/stats` | Aggregate counts, per-peer breakdown, 24h rate, queue depth (30s cache) |
-| GET | `/documents?limit=50&offset=0` | Paginated document list with observer/session metadata |
-| GET | `/messages?limit=50&offset=0` | Paginated message log with peer/token metadata |
-| GET | `/embeddings?limit=50&offset=0` | Paginated embedding metadata (no vector data) |
+| GET | `/documents?limit=50&offset=0` | Paginated document list (limit 1-100) with observer/session metadata |
+| GET | `/messages?limit=50&offset=0` | Paginated message log (limit 1-100) with peer/token metadata |
+| GET | `/embeddings?limit=50&offset=0` | Paginated embedding metadata (limit 1-100, no vector data) |
 | GET | `/queue` | Task queue breakdown — Honcho API with DB fallback |
 | POST | `/search` | Semantic search proxy (body: `{query, limit}`) |
 | GET | `/config` | Configuration snapshot (secrets redacted) |
@@ -92,7 +92,7 @@ honcha-memory/
 │       └── index.js         # IIFE build — canonical deployed artifact
 ├── tests/
 │   ├── __init__.py
-│   └── test_api.py          # 20 tests (config, search, stats, detail, frontend, manifest)
+│   └── test_api.py          # Config, search, pagination, detail, frontend, and manifest tests
 └── docs/
     └── plans/
         └── v0.2.0-enhancement-sprint.md

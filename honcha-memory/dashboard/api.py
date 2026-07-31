@@ -5,7 +5,7 @@ Mounted at /api/plugins/honcha-memory/ by Hermes web server.
 Queries Honcha local memory (PostgreSQL) and proxies Honcha API endpoints.
 """
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from pathlib import Path
 import subprocess
 import json
@@ -28,6 +28,8 @@ import time
 
 _stats_cache = {"data": None, "ts": 0}
 CACHE_TTL = 30  # seconds
+DEFAULT_PAGE_LIMIT = 50
+MAX_PAGE_LIMIT = 100
 
 
 def _docker_exec_psql(query: str, container: str = HONCHA_DB_CONTAINER):
@@ -265,7 +267,10 @@ async def health():
 # ---------------------------------------------------------------------------
 
 @router.get("/documents")
-async def get_documents(limit: int = 50, offset: int = 0):
+async def get_documents(
+    limit: int = Query(DEFAULT_PAGE_LIMIT, ge=1, le=MAX_PAGE_LIMIT),
+    offset: int = Query(0, ge=0),
+):
     """Paginated document list (memories)."""
     query = f"""
     SELECT id, content, observer, created_at, session_name, observed
@@ -305,7 +310,10 @@ async def get_documents(limit: int = 50, offset: int = 0):
 
 
 @router.get("/messages")
-async def get_messages(limit: int = 50, offset: int = 0):
+async def get_messages(
+    limit: int = Query(DEFAULT_PAGE_LIMIT, ge=1, le=MAX_PAGE_LIMIT),
+    offset: int = Query(0, ge=0),
+):
     """Paginated message log."""
     query = f"""
     SELECT public_id, content, peer_name, created_at, session_name, token_count
@@ -345,7 +353,10 @@ async def get_messages(limit: int = 50, offset: int = 0):
 
 
 @router.get("/embeddings")
-async def get_embeddings(limit: int = 50, offset: int = 0):
+async def get_embeddings(
+    limit: int = Query(DEFAULT_PAGE_LIMIT, ge=1, le=MAX_PAGE_LIMIT),
+    offset: int = Query(0, ge=0),
+):
     """Paginated embedding metadata (no vector data)."""
     query = f"""
     SELECT e.id, e.message_id, e.created_at, e.peer_name, e.session_name
